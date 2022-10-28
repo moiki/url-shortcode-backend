@@ -23,6 +23,8 @@ const { port } = configCommon;
         MongooseConnection().then(() => console.log(green(`MongoDB connection OK!`)));
         // call routes
         routes.urlsRoutes(app, 'api/v1');
+        routes.visitsRoutes(app, 'api/v1');
+        routes.authRoutes(app, 'api/v1');
         // listen to port
         app.listen(port, () =>
         console.log(cyan(`🚀 Server is flying on http://localhost:${port}/api/v1 🚀`)),
