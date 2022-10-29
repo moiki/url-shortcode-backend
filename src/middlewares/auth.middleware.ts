@@ -1,26 +1,36 @@
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import jwt, { Secret } from 'jsonwebtoken';
+import { AuthChecker } from 'type-graphql';
+import 'dotenv/config';
+import Error from './error.middleware';
 import configCommon from "../common/config.common";
+const contextService = require('request-context');
 
 export const SECRET_KEY: Secret = configCommon.secret_key;
 
-export interface CustomRequest extends Request {
-    token: string | JwtPayload;
-}
-
-export const AuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const authChecker: AuthChecker<any> = async ({ context }) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
-        if (!token) {
-            throw new Error();
+        // Get headers from context
+        let headers = context.req.headers;
+
+        // Check that the headers contain the Authorization header
+        if (!headers.authorization) {
+            throw new Error('Missing Authorization Header', 401);
         }
+        // Get the token from the authorization header
+        const token = headers.authorization.split(' ')[1];
+        // Validate the token
+        const payload: any = jwt.verify(token, SECRET_KEY!);
+        contextService.set('req:userInfo', JSON.parse(JSON.stringify(payload)));
+        context.userInfo = JSON.parse(JSON.stringify(payload));
+        return true;
+    } catch ({ message, code }) {
+        if (message === 'jwt expired') {
+            const newCode = 401;
+            throw new Error(message, newCode);
+        }
+        throw new Error(message, code);
 
-        const decoded = jwt.verify(token, SECRET_KEY);
-        (req as CustomRequest).token = decoded;
-
-        next();
-    } catch (err) {
-        console.log(err.message)
-        res.status(401).send({message:'Please authenticate'});
     }
 };
+
+export default authChecker;

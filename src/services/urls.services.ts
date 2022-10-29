@@ -22,7 +22,7 @@ async function SaveUrlService(url: string) {
         }
         await UrlModel.create(newUrl);
         return {
-            data: `${newUrl.base_url}/${newUrl.shortcode}`
+            data: `${newUrl.base_url}/ly/${newUrl.shortcode}`
         }
 
     } catch (error) {
@@ -80,17 +80,27 @@ async function ListUrls(page: number = 1, perPage: number = 10) {
                             $project: {
                                 _id: 0,
                                 original_url: 1,
-                                short_url: { $concat: ["$base_url","/","$shortcode"] },
+                                short_url: { $concat: ["$base_url","/ly/","$shortcode"] },
                                 visits_quantity: 1
                             }
                         }
                     ]
                 }
+            },
+            {
+                $unwind: "$total"
+            },
+            {
+                $project: {
+                    total: "$total.count",
+                    docs: 1
+                }
             }
         ]
-        const result = await UrlModel.aggregate(pipeline) || [];
+        const [result] = await UrlModel.aggregate(pipeline) || [];
+        console.log(result)
         return {
-            data: result,
+            data: result || {total: 0, docs: []},
             error: null
         };
 
