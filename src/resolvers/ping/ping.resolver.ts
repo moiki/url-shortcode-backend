@@ -5,7 +5,6 @@ import Error from "../../middlewares/error.middleware"
 export default class PingResolver {
 
     @Query(()=> String)
-    @Authorized()
     async Ping() {
         try {
             return "Pong!";
