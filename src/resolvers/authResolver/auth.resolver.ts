@@ -7,7 +7,6 @@ import {LoginOutput} from "./authObjectTypes/auth.output";
 @Resolver()
 export default class AuthResolver {
     @Query(() => LoginOutput)
-    @Authorized()
     async Login(@Args() {email, password}: LoginInput) {
         try {
             const {data, error} = await authServices.UserLogin(email, password);
@@ -23,7 +22,6 @@ export default class AuthResolver {
     }
 
     @Query(() => Boolean)
-    @Authorized()
     async SignUp(@Args() {email, password, username}: SignUpInput) {
         try {
             const registerBody: IRegister = {

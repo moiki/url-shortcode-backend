@@ -1,4 +1,4 @@
-import {Arg, Authorized, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, Authorized, Int, Mutation, Query, Resolver} from "type-graphql";
 import Error from "../../middlewares/error.middleware";
 import urlsServices from "../../services/urls.services";
 import {UrlTableOutput} from "./urlsObjectTypes/urls.output";
@@ -22,9 +22,9 @@ export default class UrlsResolver {
 
     @Query(()=> UrlTableOutput)
     @Authorized()
-    async listUrls(
-        @Arg("page") page: number = 1,
-        @Arg("perPage") perPage: number = 10,
+    async ListUrls(
+        @Arg("page", ()=> Int) page: number = 1,
+        @Arg("perPage", ()=> Int) perPage: number = 10,
     ) {
         try {
             const {data, error} = await urlsServices.ListUrls(page,perPage);

@@ -6,7 +6,7 @@ import {gray, red} from "chalk";
 
  export default async function CreateGraphQLServer() {
      // Create Schema
-     const schema =   await buildSchema({
+     const schema = await buildSchema({
          resolvers,
          authChecker,
      });

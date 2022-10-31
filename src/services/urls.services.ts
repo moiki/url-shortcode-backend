@@ -80,7 +80,7 @@ async function ListUrls(page: number = 1, perPage: number = 10) {
                             $project: {
                                 _id: 0,
                                 original_url: 1,
-                                short_url: { $concat: ["$base_url","/ly/","$shortcode"] },
+                                short_url: { $concat: ["$base_url","/","$shortcode"] },
                                 visits_quantity: 1
                             }
                         }
