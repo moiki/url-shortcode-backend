@@ -8,7 +8,7 @@ import cors from "cors";
 const contextService = require("request-context");
  async function CreateGraphQLServer() {
      // Create Schema
-     const schema =   await buildSchema({
+     const schema = await buildSchema({
          resolvers,
          authChecker,
      });
