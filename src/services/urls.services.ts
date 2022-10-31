@@ -98,7 +98,6 @@ async function ListUrls(page: number = 1, perPage: number = 10) {
             }
         ]
         const [result] = await UrlModel.aggregate(pipeline) || [];
-        console.log(result)
         return {
             data: result || {total: 0, docs: []},
             error: null

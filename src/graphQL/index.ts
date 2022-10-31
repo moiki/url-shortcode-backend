@@ -3,8 +3,10 @@ import {resolvers} from "../resolvers";
 import authChecker from "../middlewares/auth.middleware";
 import {ApolloServer} from "apollo-server-express";
 import {gray, red} from "chalk";
-
- export default async function CreateGraphQLServer() {
+import express from "express";
+import cors from "cors";
+const contextService = require("request-context");
+ async function CreateGraphQLServer() {
      // Create Schema
      const schema = await buildSchema({
          resolvers,
@@ -34,3 +36,22 @@ import {gray, red} from "chalk";
          },
      });
  }
+
+async function CreateExpressGraphQLServer() {
+    const app = express();
+    try {
+        app.use(contextService.middleware("req"));
+        app.set('trust proxy', true);
+        app.use(cors());
+        const server = await CreateGraphQLServer()
+        await server.start();
+        server.applyMiddleware({ app });
+        return {app, error: null};
+    } catch (error) {
+        console.log(error.message)
+        return {app, error: error.message};
+    }
+}
+export default {
+    CreateExpressGraphQLServer
+}
