@@ -3,7 +3,7 @@ import urlsServices from "../../services/urls.services";
 
 export default (app: Express.Application, BASE_URL: string) => {
     const router = Express.Router();
-    const path = `/ly/`;
+    const path = `/`;
     app.use(path, router);
 
     router.get("/:code", async (req,res,next) => {

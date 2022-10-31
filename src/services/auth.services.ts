@@ -68,5 +68,6 @@ const validateNewUser = (user: IRegister) => {
 
 export default {
     UserLogin,
-    UserSignUp
+    UserSignUp,
+    GenerateToken
 }

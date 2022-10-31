@@ -80,7 +80,7 @@ async function ListUrls(page: number = 1, perPage: number = 10) {
                             $project: {
                                 _id: 0,
                                 original_url: 1,
-                                short_url: { $concat: ["$base_url","/ly/","$shortcode"] },
+                                short_url: { $concat: ["$base_url","/","$shortcode"] },
                                 visits_quantity: 1
                             }
                         }
@@ -98,7 +98,6 @@ async function ListUrls(page: number = 1, perPage: number = 10) {
             }
         ]
         const [result] = await UrlModel.aggregate(pipeline) || [];
-        console.log(result)
         return {
             data: result || {total: 0, docs: []},
             error: null
