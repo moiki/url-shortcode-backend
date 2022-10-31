@@ -6,6 +6,8 @@ import {UrlTableOutput} from "../src/resolvers/urlsResolver/urlsObjectTypes/urls
 import request from 'supertest-graphql'
 import {Express} from "express";
 import graphQL from "../src/graphQL";
+import mongoose from "@typegoose/typegoose";
+import SeedHelper from "../src/helpers/seed.helper";
 const mockTestForToken = {
     email: "moises@gmail.com",
     password: "1234"
@@ -13,11 +15,14 @@ const mockTestForToken = {
 
 describe("Testing correct query behavior", ()=> {
     let app: Express;
+    let conn: typeof mongoose.mongoose
     beforeAll(async ()=>{
+        conn= await MongooseConnection()
+        await SeedHelper.SeedUser();
         const server = await graphQL.CreateExpressGraphQLServer();
         app = server.app;
-        await MongooseConnection()
     })
+    afterAll(async ()=> await conn.disconnect())
     const mockToken = AuthServices.GenerateToken(mockTestForToken);
 
     it('should return and object with Pong!', async function () {

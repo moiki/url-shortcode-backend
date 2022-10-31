@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import CreateGraphQLServer from "../src/graphQL";
+import mongoose from "@typegoose/typegoose";
 import {gql} from "apollo-server-express";
 import {Express} from "express";
 import graphQL from "../src/graphQL";
@@ -15,12 +15,14 @@ const mockAuth = {
 
 describe("Login function test.", ()=> {
     let app: Express;
+    let conn: typeof mongoose.mongoose
     beforeAll(async ()=>{
-        await MongooseConnection()
+        conn= await MongooseConnection()
         await SeedHelper.SeedUser();
         const server = await graphQL.CreateExpressGraphQLServer();
         app = server.app;
     })
+    afterAll(async ()=> await conn.disconnect())
     it('should return LoginOutput', async function () {
         const {data} = await request(app).query(gql`
             query ($email: String! $password: String!){
