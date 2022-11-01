@@ -1,5 +1,5 @@
-import urlsRoutes from "./urls/urls.routes";
+import visitsRoutes from "./visits/visits.routes";
 
 export default {
-    urlsRoutes
+    visitsRoutes,
 }
