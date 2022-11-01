@@ -15,8 +15,7 @@ const config = {
     db_user: process.env.DB_USER || "",
     db_pass: process.env.DB_PASSWORD || "",
     db_host: process.env.DB_HOST || "",
-    db_port: Number(process.env.DB_PORT) || 5432,
-    environment: process.env.NODE_ENV || "",
+    environment: process.env.NODE_ENV || "development",
 };
 
 export default config;
