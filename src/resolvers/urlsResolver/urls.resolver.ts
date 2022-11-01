@@ -7,7 +7,7 @@ import {UrlTableOutput} from "./urlsObjectTypes/urls.output";
 export default class UrlsResolver {
 
     @Mutation(()=> String)
-    // @Authorized()
+    @Authorized()
     async SaveUrl(@Arg("url") url: string) {
         try {
             const sht = await urlsServices.SaveUrlService(url);
