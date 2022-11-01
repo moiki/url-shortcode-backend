@@ -7,8 +7,8 @@ import {UrlTableOutput} from "./urlsObjectTypes/urls.output";
 export default class UrlsResolver {
 
     @Mutation(()=> String)
-    @Authorized()
-    async saveUrl(@Arg("url") url: string) {
+    // @Authorized()
+    async SaveUrl(@Arg("url") url: string) {
         try {
             const sht = await urlsServices.SaveUrlService(url);
             if (sht.error) {
@@ -24,7 +24,7 @@ export default class UrlsResolver {
     @Authorized()
     async ListUrls(
         @Arg("page", ()=> Int) page: number = 1,
-        @Arg("perPage", ()=> Int) perPage: number = 10,
+        @Arg("perPage", ()=> Int) perPage: number = 5,
     ) {
         try {
             const {data, error} = await urlsServices.ListUrls(page,perPage);

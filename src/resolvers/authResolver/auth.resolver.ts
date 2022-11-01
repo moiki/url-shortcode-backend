@@ -1,8 +1,8 @@
-import {Args, Authorized, Query, Resolver} from "type-graphql";
+import {Args, Authorized, Ctx, Query, Resolver} from "type-graphql";
 import {LoginInput, SignUpInput} from "./authObjectTypes/auth.input";
 import Error from "../../middlewares/error.middleware"
 import authServices, {IRegister} from "../../services/auth.services";
-import {LoginOutput} from "./authObjectTypes/auth.output";
+import {LoginOutput, MeOutput} from "./authObjectTypes/auth.output";
 
 @Resolver()
 export default class AuthResolver {
@@ -33,6 +33,18 @@ export default class AuthResolver {
             if (error) throw new Error(error);
 
             return true;
+        } catch ({message, code}) {
+            throw new Error(message, code);
+        }
+    }
+
+    @Query(() => MeOutput)
+    @Authorized()
+    async Me(@Ctx() {userInfo}: any) {
+        try {
+            const {data, error} = await authServices.me(userInfo.email);
+            if (error) throw new Error(error);
+            return data;
         } catch ({message, code}) {
             throw new Error(message, code);
         }

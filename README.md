@@ -1,6 +1,8 @@
 ## Url Shortcode Generator - API
-_____________________________
-*default User*
+<hr>
+
+default User
+
 ```Javascript
     email: "default@user.com",
     password: "pa$$w0rd"

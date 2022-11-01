@@ -49,7 +49,7 @@ async function SaveVisitRecord(code: string) {
     }
 }
 
-async function ListUrls(page: number = 1, perPage: number = 10) {
+async function ListUrls(page: number = 1, perPage: number = 5) {
     try {
         const $skip = (page - 1) * perPage;
         const $limit = perPage

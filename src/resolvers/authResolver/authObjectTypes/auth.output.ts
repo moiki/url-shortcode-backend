@@ -7,3 +7,11 @@ export class LoginOutput {
     @Field()
     username: string
 }
+
+@ObjectType("MeOutput")
+export class MeOutput {
+    @Field()
+    email: string
+    @Field()
+    username: string
+}

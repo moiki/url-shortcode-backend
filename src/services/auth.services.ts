@@ -4,6 +4,7 @@ import {UserModel, UserSchemaModel} from "../db/models/user.model";
 import configCommon from "../common/config.common";
 import {generateKey} from "crypto";
 import {isNullOrWhitespace, validateEmail} from "../helpers";
+import {MeOutput} from "../resolvers/authResolver/authObjectTypes/auth.output";
 
 export interface IRegister {
     username: string;
@@ -50,8 +51,22 @@ async function UserSignUp(newUser: IRegister) {
     }
 }
 
+async function me(email: string) {
+    try {
+        const me = await UserModel.findOne({email});
+        if (!me) return { error: "User is no longer available" }
+        const meResult: MeOutput = {
+            username: me.username, email: me.email
+        }
+        return { data: meResult, error: null }
+    } catch (error) {
+        console.log(error.message)
+        return {error: error.message, data: null}
+    }
+}
+
 function GenerateToken(data: any) {
-    const token = jwt.sign({_id: data._id?.toString(), name: data.username}, configCommon.secret_key, {
+    const token = jwt.sign({_id: data._id?.toString(), name: data.username, email: data.email}, configCommon.secret_key, {
         expiresIn: configCommon.expiration_token,
     });
 
@@ -69,5 +84,6 @@ const validateNewUser = (user: IRegister) => {
 export default {
     UserLogin,
     UserSignUp,
-    GenerateToken
+    GenerateToken,
+    me
 }

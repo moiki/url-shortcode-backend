@@ -8,26 +8,27 @@ import {Express} from "express";
 import graphQL from "../src/graphQL";
 import mongoose from "@typegoose/typegoose";
 import SeedHelper from "../src/helpers/seed.helper";
+
 const mockTestForToken = {
-    email: "moises@gmail.com",
-    password: "1234"
+    email: "default@user.com",
+    password: "pa$$w0rd"
 }
 
-describe("Testing correct query behavior", ()=> {
+describe("Testing correct query behavior", () => {
     let app: Express;
     let conn: typeof mongoose.mongoose
-    beforeAll(async ()=>{
-        conn= await MongooseConnection()
+    beforeAll(async () => {
+        conn = await MongooseConnection()
         await SeedHelper.SeedUser();
         const server = await graphQL.CreateExpressGraphQLServer();
         app = server.app;
     })
-    afterAll(async ()=> await conn.disconnect())
+    afterAll(async () => await conn.disconnect())
     const mockToken = AuthServices.GenerateToken(mockTestForToken);
 
     it('should return and object with Pong!', async function () {
         const {data} = await request(app)
-            .query(gql`
+        .query(gql`
             query {
                 Ping
             }`)
@@ -36,7 +37,7 @@ describe("Testing correct query behavior", ()=> {
 
     it('should return and object with Pong!', async function () {
         const {data} = await request(app)
-            .query(gql`
+        .query(gql`
             query($page: Int! $perPage: Int! ){
                 ListUrls(page: $page perPage: $perPage) {
                     docs {
@@ -50,4 +51,26 @@ describe("Testing correct query behavior", ()=> {
         .variables({page: 1, perPage: 10})
         expect(data).toMatchObject(new UrlTableOutput())
     });
-})
+
+    it('should return simple user data', async function () {
+        const {data} = await request(app)
+        .query(gql`
+            query {
+                Me {
+                    username
+                    email
+                }
+            }`).auth(mockToken.token, {type: "bearer"})
+        expect(data.Me.email).toBe(mockTestForToken.email)
+    });
+
+    it('should return a string for shortcode url', async function () {
+        const {data} = await request(app)
+        .query(gql`
+            mutation SaveUrl($url: String!){
+                SaveUrl(url: $url)
+            }`).auth(mockToken.token, {type: "bearer"})
+        .variables({url: "https://sheet.google.com"})
+        expect(data.SaveUrl).toContain("http://localhost");
+    })
+});
